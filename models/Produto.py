@@ -1,18 +1,13 @@
 class Produto:
-                     # Metodo construtor - Instanciar o objeto
-    def __init__(self, id_codigo_produto, descricao, preco, qtd):
-        self.id_codigo_produto=id_codigo_produto # Atributo
-        self.descricao=descricao # Atributo
-        self.preco=preco # Atributo
-        self.qtd=qtd # Atributo
-                     # Metodos - Operações  
+
+    def __init__(self, parCod, parDescricao, parPreco, parQtd):
+        self.cod=parCod
+        self.descricao=parDescricao
+        self.preco=parPreco
+        self.qtd=parQtd
+
     def listar(self):
-        print(  f" Cod: {self.id_codigo_produto}"+
+        print(  f" Cod: {self.cod}"+
                 f" | Produto: {self.descricao[:20]:<20}"
                 f" | Preço: {self.preco}"+
                 f" | Qtd: {self.qtd}")
-
-    def alterar(self, descricao, preco, qtd):
-        self.descricao=descricao
-        self.preco=preco
-        self.qtd=qtd

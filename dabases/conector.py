@@ -4,7 +4,7 @@ import mysql.connector
 user= "root"
 senha=""
 host="localhost"
-banco="lanchonete"
+banco="lanchonetesabrina"
 
 class Conector:
 

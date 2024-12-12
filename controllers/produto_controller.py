@@ -1,104 +1,81 @@
 import mysql.connector
-from models.Produto import Produto
-
-
-
-
+from models.produto import Produto
 
 class ProdutoController:
-
-#listar todas informacoes da tabela
-    def listar(conexao):
+    #C - Criar um novo registro no banco de dados
+    def inserir(conexao, produto): 
+        try:
+            cursor = conexao.cursor()
+            #usar o %s para evitar o SQL injector
+            query = "INSERT INTO Produto(descricao, preco, qtd) VALUES(%s, %s, %s)"
+            cursor.execute(query, (produto.descricao,produto.preco,produto.qtd))
+            conexao.commit()
+            print(f"{produto.descricao} Registrado como sucesso!")
+            
+        except mysql.connector.Error as e:
+            print(f"Erro ao inserir produto:{e}")  
+        finally:
+            cursor.close()
+        
+    #R - Read retona uma lista de objeto produto
+    def listar(conexao): 
         listaProdutos=[]
         try:
-            cursor= conexao.cursor()
-            query= "select * from Produto"
+            cursor = conexao.cursor()
+            query = "Select * from Produto"
             cursor.execute(query)
             registros = cursor.fetchall()
-
             for registro in registros:
-             objeto = Produto(*registro)   #Produto (registro[0], registro[1],registro[2]....)
-            listaProdutos.append(objeto)
-
+                objeto =  Produto(*registro) #Produto(registro[0],registro[1],..)
+                listaProdutos.append(objeto)
+        
         except mysql.connector.Error as e:
-          print(f"Erro ao listar produtos:{e}")
-
+            print(f"Erro ao listar produtos:{e}")  
         finally:
-          cursor.close()
+            cursor.close()
         return listaProdutos
 
-
-# atualizar uma informação da lista
-    def update(conexao,id_codigo_produto, preco,qtd):
+    #U - update- atualizar uma informação de uma linha
+    def update(conexao, idProduto, preco, qtd):
         try:
-            cursor = conexao.cursor()
-            query = "UPDATE Produto SET preco=%s, qtd=%s WHERE id_codigo_produto=%s"
-            cursor.execute(query, (preco,qtd,id_codigo_produto))
+            cursor =  conexao.cursor()
+            query = "UPDATE produto SET preco=%s, qtd=%s WHERE id_codigo_produto=%s"
+            cursor.execute(query, (preco, qtd, idProduto))
             conexao.commit()
-            print(f"{id_codigo_produto} atualizado com sucesso!")
-            
+            print(f"{idProduto} atualizado com sucesso!")
         except mysql.connector.Error as e:
-           print(f"Erro ao atualizar o produto:{e}")
-
+            print(f"Erro ao atualizar produto:{e}")  
         finally:
             cursor.close()
-    
-#deletar uma linha a partir de seu id
-    def delete(conexao,id_codigo_produto,):
+
+    #D deletar uma linha a partir de um ID
+    def delete(conexao, idProduto):
         try:
-            cursor = conexao.cursor()
-            query= " DELETE FROM Produto WHERE id_codigo_produto=%s"
-            cursor.execute(query,(id_codigo_produto,))
+            cursor =  conexao.cursor()
+            query = "DELETE FROM Produto WHERE idProduto=%s"
+            cursor.execute(query,(idProduto,))
             conexao.commit()
-            print(f"{id_codigo_produto} deletado com sucesso!")
-
-
+            print(F"{idProduto} Excluído!")
+            
         except mysql.connector.Error as e:
-          print(f"Erro ao deletar o produto:{e}")
-
+            print(f"Erro ao excluir produto:{e}")  
         finally:
             cursor.close()
         
-
-#buscar imformações de uma linha
-    def buscar(conexao,buscar):
+    #buscar informações de uma linha
+    def buscar(conexao, busca):
         listaProduto=[]
-
         try:
             cursor = conexao.cursor()
-            query = "select * from  Produto WHERE descricao like %s"
-            cursor.execute(query, ("%"+buscar+"%",))
+            query = "Select * from Produto where descricao like %s "
+            cursor.execute(query, ("%"+busca+"%",))
             registros = cursor.fetchall()
-
-            for Produto in registros:
-             objeto = Produto(*Produto)   #Produto (produto[0], produto[1],produto[2]....)
-            listaProduto.append(objeto)
         
-            
+            for produto in registros:
+                objeto=Produto(*produto)
+                listaProduto.append(objeto)   
         except mysql.connector.Error as e:
-          print(f"Erro ao buscar produto:{e}")
-
+            print(f"Erro ao buscar produto:{e}")  
         finally:
             cursor.close()
         return listaProduto
-
-
-
-#criar um novo registros no banco de dados
-    def inserir(conexao,produto):
-
-        try:
-            cursor= conexao.cursor()
-            #usar o %s para evitar o sql injetor
-            query = f"INSERT INTO Produto(descricao,preco,qtd) VALUES(%s,%s,%s)"
-            cursor.execute(query, (produto.descricao,produto.preco,produto.qtd))
-            conexao.commit()
-            print(f"{produto.descricao} registrado com sucesso!")
-
-        except mysql.connector.Error as e:
-            print(f"erro ao inserir um produto:{e}")
-
-        finally:
-            cursor.close()
-
-
